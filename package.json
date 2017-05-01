@@ -9,7 +9,7 @@
     "bluebird": "^3.5.0",
     "neeo-sdk": "*",
     "lifx-http-api": "^1.0.3",
-    "node-castv2-client": "*",
+    "castv2-client": "*",
     "mdns": "*"
   },
   "engines": {
