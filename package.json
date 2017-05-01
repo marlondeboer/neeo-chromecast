@@ -1,0 +1,28 @@
+{
+  "name": "neeo-sdk-examples",
+  "version": "0.37.2",
+  "description": "NEEO Brain SDK Examples",
+  "repository": "https://github.com/NEEOInc/neeo-sdk-examples",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "neeo-sdk": "*",
+    "lifx-http-api": "^1.0.3",
+    "node-castv2-client": "*",
+    "mdns": "*"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "scripts": {
+    "jshint": "jshint --show-non-errors --verbose device/**/ recipe/*.js",
+    "server:chromecast": "node device/chromecast/index.js",
+    "clean": "rm -rf ./dist && mkdir -p ./dist",
+    "release": "npm run jshint && npm run clean && npm run release:copy",
+    "release:copy": "cp -r ./{device,recipe} ./dist && cp .jshintrc .gitignore .editorconfig *.md package.json License ./dist"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.4"
+  }
+}
