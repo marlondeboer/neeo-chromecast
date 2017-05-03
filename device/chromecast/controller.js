@@ -1,35 +1,22 @@
 'use strict';
 const util = require('util')
-
 var debug = require('debug')('marlon')
 
 var Client                = require('castv2-client').Client;
 var DefaultMediaReceiver  = require('castv2-client').DefaultMediaReceiver;
-var mdns                  = require('mdns');
+var bonjour 		  = require('bonjour')();
 
-var sequence = [
-    mdns.rst.DNSServiceResolve(),
-    'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo() : mdns.rst.getaddrinfo({families:[4]}),
-    mdns.rst.makeAddressesUnique()
-];
-var browser = mdns.createBrowser(mdns.tcp('googlecast'), {resolverSequence: sequence});
 var chromecasts = [];
 
-// check available chromecasts at startup
-  browser.on('serviceUp', function(service) {
-    var items = Object.keys(service);
-    items.forEach(function(item) {
-      if (item == "txtRecord") {
-	 debug(util.inspect(service, false, null));
-         chromecasts.push({id: service['name'], name: service['txtRecord']['fn'], ip: service['addresses'][0]});
-        }
-      })
-    browser.stop();
-  })
-  browser.start();
+function serviceUpListener(service) {
+  debug(util.inspect(service, false, null)); 
+  chromecasts.push({id: service['txt']['id'], name: service['txt']['fn'], ip: service['addresses'][0]});
+}
 
-module.exports.discoverLiteDevices = function() {
-  debug(util.inspect(chromecasts, false, null));
+const mdnsBrowser = bonjour.find({ type: 'googlecast' }, serviceUpListener);
+mdnsBrowser.start();
+
+module.exports.discoverCC = function() {
   return chromecasts;
 }
 

@@ -18,14 +18,14 @@ const customCCDevice = neeoapi.buildDevice('chromecast test')
   .addButton({ name: 'toggle', label: 'toggle' })
   .addButtonHander(controller.onButtonPressed)
   
-  .enableDiscovery(discoveryInstructions, controller.discoverLiteDevices);
+  .enableDiscovery(discoveryInstructions, controller.discoverCC);
 
 function startSdkExample(brain) {
   console.log('- Start server');
   neeoapi.startServer({
     brain,
     port: 6336,
-    name: 'simple-adapter-one',
+    name: 'chromecastcontroller',
     devices: [customCCDevice]
   })
   .then(() => {
