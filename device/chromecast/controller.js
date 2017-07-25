@@ -7,26 +7,38 @@ var DefaultMediaReceiver  = require('castv2-client').DefaultMediaReceiver;
 var bonjour 		  = require('bonjour')();
 
 var chromecasts = [];
+var title = "waiting for input";
+var image = "";
 
 function serviceUpListener(service) {
   debug(util.inspect(service, false, null)); 
   chromecasts.push({id: service['txt']['id'], name: service['txt']['fn'], ip: service['addresses'][0]});
-}
+};
 
 const mdnsBrowser = bonjour.find({ type: 'googlecast' }, serviceUpListener);
 mdnsBrowser.start();
 
 module.exports.discoverCC = function() {
   return chromecasts;
-}
+};
+
+module.exports.CCPlaying = function() {
+  debug("title: " + title);
+  return title;
+};
+
+module.exports.CCImageUrl = function CCImageUrl() {
+  debug("image: " + image);
+  return image;
+};
 
 module.exports.onButtonPressed = function onButtonPressed(name, deviceid) {
-  debug('[CONTROLLER]', name, 'button was pressed: ', deviceid);
+  debug('[CONTROLLER] "', name, '" button was pressed: ', deviceid);
   var client = new Client();
   var host = '';
  
   for (var key in chromecasts) {
-    if (chromecasts[key]['id'] == deviceid) {
+    if (chromecasts[key]['id'] === deviceid) {
       host = chromecasts[key]['ip']
     }
   }
@@ -47,14 +59,19 @@ module.exports.onButtonPressed = function onButtonPressed(name, deviceid) {
       client.join(session, DefaultMediaReceiver, function(err, player) {
          player.getStatus(function (err, status){
 	   
+           title = status['media']['metadata']['title'];
+           image = status['media']['metadata']['images'][0]['url'];
+
+	   debug("title: " + title + " image: " + image);
            debug("status: " + util.inspect(status, false, null)); 
-           if (status['playerState'] == "PLAYING") {
+           if (status['playerState'] === "PLAYING") {
               player.pause();
-            } else if (status['playerState'] == "PAUSED") {
+            } else if (status['playerState'] === "PAUSED") {
 	      player.play();
             }
          })
       })
     })
+    //client.close();
   })
 }

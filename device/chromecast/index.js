@@ -12,10 +12,18 @@ const discoveryInstructions = {
 const customCCDevice = neeoapi.buildDevice('chromecast test')
   .setManufacturer('Marlon de Boer')
   .addAdditionalSearchToken('chromecast testing')
-  .setType('ACCESSOIRE')
+  .setType('AVRECEIVER')
 
   // Then we add the capabilities of the device
-  .addButton({ name: 'toggle', label: 'toggle' })
+  .addButton({ name: 'POWER ON', label: 'Power On' })
+  .addButton({ name: 'POWER OFF', label: 'Power Off' })
+  .addButton({ name: 'TOGGLE', label: 'Toggle' })
+
+  .addButtonGroup('Volume') 
+  
+  .addTextLabel({ name: 'playing', label: 'Playing' }, controller.CCPlaying)
+  .addImageUrl({ name: 'playimg', label: 'Artist', size: 'large' }, controller.CCImageUrl)
+ 
   .addButtonHander(controller.onButtonPressed)
   
   .enableDiscovery(discoveryInstructions, controller.discoverCC);
